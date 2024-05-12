@@ -14,7 +14,7 @@ The routines require Golog in order to produce simulated action histories. We ha
 
 ## Examples (MS Windows)
 
-The examples below use the Meeting Scheduling domain model. A graphical representation of the model can be found [here](). File opens with [Draw.io](https://www.drawio.com/).
+The examples below use the Meeting Scheduling domain model. A graphical representation of the model can be found [here](https://github.com/anonymous-author-1000/xp-i/blob/main/src/domains/mtg.drawio) (select download and save as a DRAWIO file). File opens with [Draw.io](https://www.drawio.com/). Alternativelly you can view [the PDF version](https://github.com/anonymous-author-1000/xp-i/blob/main/src/domains/mtg.pdf)
 
 ### Manual mode
 
@@ -67,6 +67,4 @@ Please send issues and bugs to [redacted for peer review].
 ## Additional resources
 
 The accompanying paper can be found [here](paper URL)
-
-## License information
 
