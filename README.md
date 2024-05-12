@@ -26,7 +26,7 @@ The examples below use the Meeting Scheduling domain model. A graphical represen
 5. `why([predicate])`, where `[predicate]` is any of the predicates appearing in the history currently in the buffer. This will produce explanations for `[predicate]`
     - Press `;` to move to the next explanation or `.` to end.
     
-```prolog 
+```
 ?- why(announceMeeting(matilda,xing)).
    Teleological Explanation: Because meetingAnnounced(matilda) (meetingAnnounced(matilda)) [operationalization (axiom 1)]
    true ;
@@ -48,7 +48,7 @@ The examples below use the Meeting Scheduling domain model. A graphical represen
 5. `why_interactive([predicate])`, where `[predicate]` is any of the predicates appearing in the history currently in the buffer. This will produce a one-line list of all explanations for `[predicate]`. For example:
 
 
-```prolog
+```
 ?- why_interactive(announceMeeting(matilda,xing)).
 
    Explanantia summary for announceMeeting(matilda,xing):
