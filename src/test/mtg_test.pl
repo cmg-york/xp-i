@@ -1,0 +1,1 @@
+:-consult('../domains/mtg.pl').
