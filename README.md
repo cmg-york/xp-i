@@ -2,7 +2,7 @@
 
 Xp-i is a set of Prolog routines for extracting explanations from $i^+$ models. The latter need to be appropriately translated to a Golog-compatible specification. The toolset allows generation of random action histories from the $i^+$ models, and subsequently posing explanation questions with regards to each action included in the history. A manual and an interactive explanation extraction mode is currently supported.
 
-The routines require Golog in order to produce simulated action histories. We have no premission to redistribute the Golog interpreter, but it can be downloaded from the University of Toronto's  [Cognitive Robotics Lab Pages](https://www.cs.toronto.edu/cogrobo/main/systems/index.html).
+The routines require Golog in order to produce simulated action histories. We have no premission to redistribute the Golog interpreter, but it can be downloaded from the [University of Toronto's Cognitive Robotics Lab pages](https://www.cs.toronto.edu/cogrobo/main/systems/index.html).
 
 
 ## Installation
@@ -65,6 +65,5 @@ The examples below use the Meeting Scheduling domain model. A graphical represen
 Please send issues and bugs to [redacted for peer review].
 
 ## Additional resources
-
 The accompanying paper can be found [here](paper URL)
 
