@@ -65,5 +65,5 @@ The examples below use the Meeting Scheduling domain model. A graphical represen
 Please send issues and bugs to [redacted for peer review].
 
 ## Additional resources
-The accompanying paper can be found [here](paper URL)
+The accompanying paper can be found [here](https://github.com/anonymous-author-1000/xp-i/blob/main/docs/ER2024-Explain-Long.pdf)
 
