@@ -60,10 +60,9 @@ The examples below use the Meeting Scheduling domain model. A graphical represen
 6. Select which explanation to adopt as the explanandum for the next round by entering the corresponding number following by a full-stop - e.g. `1.` for explaining `meetingAnnounced(matilda)` above.
 7. Enter `e.` (notice the full-stop `.` at the end) to end the interactive loop.
 
+## Troubleshooting
 
 Please send issues and bugs to [liaskos\@yorku.ca](mailto:liaskos\@yorku.ca?subject=Question%20about%20xp-i).
-
-## Troubleshooting
 
 ## Additional resources
 The accompanying paper can be found [here](https://github.com/anonymous-author-1000/xp-i/blob/main/doc/ER2024-Explain-Long.pdf)
