@@ -61,8 +61,8 @@ The examples below use the Meeting Scheduling domain model. A graphical represen
 7. Enter `e.` (notice the full-stop `.` at the end) to end the interactive loop.
 
 
+Please send issues and bugs to [liaskos@yorku.ca](mailto:liaskos@yorku.ca?subject=Question about xp-i).
 ## Troubleshooting
-Please send issues and bugs to [redacted for peer review].
 
 ## Additional resources
 The accompanying paper can be found [here](https://github.com/anonymous-author-1000/xp-i/blob/main/doc/ER2024-Explain-Long.pdf)
