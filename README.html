@@ -363,8 +363,8 @@ history. A manual and an interactive explanation extraction mode is
 currently supported.</p>
 <p>The routines require Golog in order to produce simulated action
 histories. We have no premission to redistribute the Golog interpreter,
-but it can be downloaded from the University of Toronto’s <a href="https://www.cs.toronto.edu/cogrobo/main/systems/index.html">Cognitive
-Robotics Lab Pages</a>.</p>
+but it can be downloaded from the <a href="https://www.cs.toronto.edu/cogrobo/main/systems/index.html">University
+of Toronto’s Cognitive Robotics Lab pages</a>.</p>
 <div id="installation" class="section level2">
 <h2>Installation</h2>
 <ol style="list-style-type: decimal">
@@ -379,7 +379,9 @@ system.</li>
 <h2>Examples (MS Windows)</h2>
 <p>The examples below use the Meeting Scheduling domain model. A
 graphical representation of the model can be found <a href="https://github.com/anonymous-author-1000/xp-i/blob/main/src/domains/mtg.drawio">here</a>
-(select download and save as a DRAWIO file. File opens with <a href="https://www.drawio.com/">Draw.io</a>.</p>
+(select download and save as a DRAWIO file). File opens with <a href="https://www.drawio.com/">Draw.io</a>. Alternativelly you can view
+<a href="https://github.com/anonymous-author-1000/xp-i/blob/main/src/domains/mtg.pdf">the
+PDF version</a></p>
 <div id="manual-mode" class="section level3">
 <h3>Manual mode</h3>
 <ol style="list-style-type: decimal">
@@ -402,7 +404,7 @@ will produce explanations for <code>[predicate]</code>
 <code>.</code> to end.</li>
 </ul></li>
 </ol>
-<pre class="prolog"><code>?- why(announceMeeting(matilda,xing)).
+<pre><code>?- why(announceMeeting(matilda,xing)).
    Teleological Explanation: Because meetingAnnounced(matilda) (meetingAnnounced(matilda)) [operationalization (axiom 1)]
    true ;
    Canonical Explanation: Because organizer abdul wanted to have the meeting attended. (meetingAttended(abdul))  [enablement (axiom 4)]
@@ -433,7 +435,7 @@ the history buffer and on which explanations will be based.</li>
 history currently in the buffer. This will produce a one-line list of
 all explanations for <code>[predicate]</code>. For example:</li>
 </ol>
-<pre class="prolog"><code>?- why_interactive(announceMeeting(matilda,xing)).
+<pre><code>?- why_interactive(announceMeeting(matilda,xing)).
 
    Explanantia summary for announceMeeting(matilda,xing):
    1: meetingAnnounced(matilda) - operationalization (axiom 1)
@@ -448,15 +450,15 @@ e.g. <code>1.</code> for explaining
 <li>Enter <code>e.</code> (notice the full-stop <code>.</code> at the
 end) to end the interactive loop.</li>
 </ol>
+<p>Please send issues and bugs to <a href="mailto:liaskos@yorku.ca?subject=Question%20about%20xp-i">liaskos@yorku.ca</a>.</p>
 </div>
 </div>
 <div id="troubleshooting" class="section level2">
 <h2>Troubleshooting</h2>
-<p>Please send issues and bugs to [redacted for peer review].</p>
 </div>
 <div id="additional-resources" class="section level2">
 <h2>Additional resources</h2>
-<p>The accompanying paper can be found <a href="paper%20URL">here</a></p>
+<p>The accompanying paper can be found <a href="https://github.com/anonymous-author-1000/xp-i/blob/main/doc/ER2024-Explain-Long.pdf">here</a></p>
 </div>
 </div>
 

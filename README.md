@@ -61,7 +61,8 @@ The examples below use the Meeting Scheduling domain model. A graphical represen
 7. Enter `e.` (notice the full-stop `.` at the end) to end the interactive loop.
 
 
-Please send issues and bugs to [liaskos@yorku.ca](mailto:liaskos@yorku.ca?subject=Question about xp-i).
+Please send issues and bugs to [liaskos\@yorku.ca](mailto:liaskos\@yorku.ca?subject=Question about xp-i).
+
 ## Troubleshooting
 
 ## Additional resources
