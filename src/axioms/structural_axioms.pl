@@ -116,16 +116,16 @@ ancestor(A,D,N) :- g_parent(Z,D),ancestor(A,Z,X), N is X + 1.
 
 %! enables(Y,X): Y enables X.
 %! pre(Y,X): Y precedes X.
-enables(Y,X) :- pre(Y,X).
-enables(Y,X) :- ancestor(W,X),enables(Y,W).
-enables(Y,X) :- ancestor(Z,Y),enables(Z,X).
+enables_(Y,X) :- pre(Y,X).
+enables_(Y,X) :- ancestor(W,X),enables(Y,W).
+enables_(Y,X) :- ancestor(Z,Y),enables(Z,X).
 
 
 % Bounded enablement
 %! enables_bound(Y,X,N): Y enables X within N steps in the graph (ancestry + the pre).
-enables(Y,X,1) :- pre(Y,X).
-enables(Y,X,N) :- ancestor(W,X,N1),enables(Y,W,N2),N is N1+N2.
-enables(Y,X,N) :- ancestor(Z,Y,N1),enables(Z,X,N2),N is N1+N2.
+enables_(Y,X,1) :- pre(Y,X).
+enables_(Y,X,N) :- ancestor(W,X,N1),enables(Y,W,N2),N is N1+N2.
+enables_(Y,X,N) :- ancestor(Z,Y,N1),enables(Z,X,N2),N is N1+N2.
 enables_bound(Y,X,N):- enables(Y,X,M),M =< N.
 
 

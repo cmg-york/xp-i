@@ -6,6 +6,8 @@
 retractSucc :- retract(current_sit(X)),!.
 retractSucc.
 
+do_cond(X,Cond):- do(X,s0,R),get_fluent(Cond,CondF),holds(CondF,R),prS(R),
+						retractSucc,assertz(current_sit(R)).
 do(X) :- do(X,s0,R),prS(R),retractSucc,assertz(current_sit(R)).
 d(S) :- \+ current_sit(S),writeln('No history in buffer.'),!.
 d(S) :- current_sit(S).

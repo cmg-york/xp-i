@@ -23,6 +23,8 @@ The examples below use the Meeting Scheduling domain model. A graphical represen
 4. `do(main)` to obtain a simulated history. The command simply asks Golog to generate a situation for the top goal.
     - Press `;` to move to the next history or `.` to end.
     - The last history displayed will be the one that will be stored in the history buffer and on which explanations will be based.
+    - You can view the history saved in buffer with `printSit.`
+    - `do_cond(main,[task]).` identifies histories in which `[task]` has occurred. For example: `do_cond(main,collectFromCallendar(matilda,amr)).` (needed to run the example in the paper) will identify a history that includes occurrence of `collectFromCallendar(matilda,amr)`.
 5. `why([predicate])`, where `[predicate]` is any of the predicates appearing in the history currently in the buffer. This will produce explanations for `[predicate]`
     - Press `;` to move to the next explanation or `.` to end.
     
@@ -39,14 +41,18 @@ The examples below use the Meeting Scheduling domain model. A graphical represen
 6. Back to Step 5 for selecting a different explanandum.
 7. Back to Step 4 for selecting a different history.
 
+
+Note: predicate `why([observation])` is equivalent to `explain([observation],e)` seen in Figure 4 of the paper, where `e` is the history saved in the buffer.
+
 ### Interactive mode
 1. In command prompt, go to `src/domains/`
 2. `swipl -l mtg.pl` to enter the SWI Prolog environment with the rules and domain loaded.
 4. `do(main)` to obtain a simulated history. The command simply asks Golog to generate a situation for the top goal.
     - Press `;` to move to the next history or `.` to end.
     - The last history displayed will be the one that will be stored in the history buffer and on which explanations will be based.
+    - You can view the history saved in buffer with `printSit.`
+    - `do_cond(main,[task]).` identifies histories in which `[task]` has occurred. For example: `do_cond(main,collectFromCallendar(matilda,amr)).` (needed to run the example in the paper) will identify a history that includes occurrence of `collectFromCallendar(matilda,amr)`.
 5. `why_interactive([predicate])`, where `[predicate]` is any of the predicates appearing in the history currently in the buffer. This will produce a one-line list of all explanations for `[predicate]`. For example:
-
 
 ```
 ?- why_interactive(announceMeeting(matilda,xing)).
@@ -60,7 +66,12 @@ The examples below use the Meeting Scheduling domain model. A graphical represen
 6. Select which explanation to adopt as the explanandum for the next round by entering the corresponding number following by a full-stop - e.g. `1.` for explaining `meetingAnnounced(matilda)` above.
 7. Enter `e.` (notice the full-stop `.` at the end) to end the interactive loop.
 
+
+
+
 ## Troubleshooting
+
+Note that the routines perform very limited error-checking at this point. 
 
 Please send issues and bugs to [liaskos\@yorku.ca](mailto:liaskos\@yorku.ca?subject=Question%20about%20xp-i).
 

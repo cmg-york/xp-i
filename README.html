@@ -435,6 +435,15 @@ the history buffer and on which explanations will be based.</li>
 history currently in the buffer. This will produce a one-line list of
 all explanations for <code>[predicate]</code>. For example:</li>
 </ol>
+<p>Note:</p>
+<ul>
+<li>You can view the history saved in buffer with
+<code>printSit.</code></li>
+<li><code>do(main,[cond]).</code> where <code>[cond]</code> is a task,
+identifies histories in which the task has occured. For example:
+<code>do_cond(main,collectFromCallendar(matilda,amr)).</code> (needed to
+run the example in the paper).</li>
+</ul>
 <pre><code>?- why_interactive(announceMeeting(matilda,xing)).
 
    Explanantia summary for announceMeeting(matilda,xing):
@@ -450,11 +459,11 @@ e.g. <code>1.</code> for explaining
 <li>Enter <code>e.</code> (notice the full-stop <code>.</code> at the
 end) to end the interactive loop.</li>
 </ol>
-<p>Please send issues and bugs to <a href="mailto:liaskos@yorku.ca?subject=Question%20about%20xp-i">liaskos@yorku.ca</a>.</p>
 </div>
 </div>
 <div id="troubleshooting" class="section level2">
 <h2>Troubleshooting</h2>
+<p>Please send issues and bugs to <a href="mailto:liaskos@yorku.ca?subject=Question%20about%20xp-i">liaskos@yorku.ca</a>.</p>
 </div>
 <div id="additional-resources" class="section level2">
 <h2>Additional resources</h2>
