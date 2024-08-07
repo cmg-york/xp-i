@@ -80,13 +80,11 @@ parent(meetingAnnounced(X),announceMeeting(X,_)).
 %parent(haveSecretaryCallPP(O,T,P),collectConstraintsByPhone(O,T,P)).
 
 % Contributions
-
 contr(havePPCalled(_,_),inclusivity,plus).
 contr(collectFromCallendar(_,_),quickScheduling,plus).
 
 
 % Dependencies
-
 dependency(I,O,
            haveSchedulingPerformedByOrganizer(I,O),haveMeetingScheduled(O)):-
 		   initiator(I),organizer(O).
@@ -99,17 +97,10 @@ dependency(I,P,
            meetingAttendedByParticipant(O,P),participate(P)):-
 		   initiator(I),potential_participant(P).
 
-% ERASE
-% delegation(Goal/Task,Delegatum)
-%delegation(collectConstraintsByPhoneSucc(Agent,Participant),havePPCalled(Participant)).
-%delegation(haveMeetingScheduled(Agent),haveMeetingScheduledRequested).
-
-
 
 %
 % I N I T I A L I Z A T I O N
 %
-
 
 agent(xing).
 agent(amr).
@@ -190,7 +181,7 @@ proc(meetingAttended(I),
 		  pi(p, ?(invited(p) & -sat_meetingAttendedByParticipant(I,p)) : meetingAttendedByParticipant(I,p))
 		  )
 ).
-	% Terminatino condition
+	% Termination condition
 	sat_meetingAttendedByParticipant(_,P,S) :- perf_participate(P,S).
 
 
@@ -232,10 +223,10 @@ proc(meetingAnnounced(C),
 		  )
 ).
 
+
 %
 % ACTION PRECONDITION AXIOMS
 %
-
 
 poss(foo,S).
 
@@ -254,8 +245,6 @@ poss(announceMeeting(C,P),S) :- perf_chooseTimeandDate(C,S).
 poss(participate(P),S).
 
 
-
-
 %
 % SATISFACTION AXIOMS
 %
@@ -266,7 +255,6 @@ sat_haveMeetingOrganized(I,S) :- perf_decideMeetingDetails(I,S),
 								
 	sat_haveSchedulingPerformed(I,S) :- organizer(O),sat_haveSchedulingPerformedByOrganizer(I,O,S).
 	sat_meetingAttended(I,S) :- \+ (invited(P,S), \+ sat_meetingAttendedByParticipant(I,P,S)).
-
 
 sat_haveSchedulingPerformedByOrganizer(I,O,S):- 
 				hasDelegated(I,O,haveSchedulingPerformedByOrganizer(I,O),haveMeetingScheduled(O),S),
@@ -338,10 +326,10 @@ perf_participate(Agent,do(A,S)) :- perf_participate(Agent,S);
 									A = participate(Agent).
 
 
+
 %
 % ORDINARY SUCCESSOR STATE AXIOMS
 %
-
 
 hasTimeTable(Agent,Participant,do(A,S)) :- hasTimeTable(Agent,Participant,S); 
 									A=collectFromCallendar(Agent,Participant);
@@ -391,8 +379,6 @@ restoreSitArg(sat_meetingAttendedByParticipant(I,P),S,sat_meetingAttendedByParti
 
 
 
-
-
 %
 % User friendly descriptions
 %
@@ -400,10 +386,21 @@ restoreSitArg(sat_meetingAttendedByParticipant(I,P),S,sat_meetingAttendedByParti
 descr2(X,Y):- descr(X,D),term_string(X,Xt),atomic_list_concat([D,' (',Xt,')'],Y).
 
 
-descr(decideMeetingDetails(X),Y):- 
-		term_string(X,Xs),string_concat(Xs,' wanted to decide meeting details.',Y).
-descr(collectConstraintsByPhone(O,T,P),Y):- 
-		atomic_list_concat(["secretary ",T," collected ",P,"'s constraints by phone on behalf of ",O,"."],Y),!.
+%descr(decideMeetingDetails(X),Y):- 
+%		term_string(X,Xs),string_concat(Xs,' wanted to decide meeting details.',Y).
+descr(haveMeetingOrganized(I),Y):-
+		atomic_list_concat(["initiator ",I," wanted to have the meeting organized."],Y),!.
+descr(haveSchedulingPerformed(I),Y):-
+		atomic_list_concat(["initiator ",I," wanted to have the scheduling of the meeting performed."],Y),!.
+descr(haveSchedulingPerformedByOrganizer(I,O),Y):-
+		atomic_list_concat(["initiator ",I," wanted to have the scheduling of the meeting performed by organizer ",O,"."],Y),!.
+descr(meetingAttended(I),Y):-
+		atomic_list_concat(["initiator ",I," wanted to have the meeting attended by participants."],Y),!.
+descr(meetingAttendedByParticipant(I,P),Y):-
+		atomic_list_concat(["initiator ",I," wanted to have the meeting attended by participant ",P,"."],Y),!.
+		descr(decideMeetingDetails(I),Y):- 
+		atomic_list_concat(["initiator ",I," wanted to decide meeting details (purpose, potential participants, quality preferences etc.)."],Y),!.
+		
 descr(timetableCollected(O,P),Y):- 
 		atomic_list_concat(["organizer ",O," wanted to collect ",P,"'s timetable."],Y),!.
 descr(chooseTimeandDate(O),Y):- 
@@ -412,9 +409,26 @@ descr(haveSecretaryCallPP(O,S,P),Y):-
 		atomic_list_concat(["organizer ",O," wanted to have secretary ",S," call participant ",P," to collect their constraints."],Y),!.
 descr(meetingAttended(O),Y):-
 		atomic_list_concat(["organizer ",O," wanted to have the meeting attended."],Y),!.
+descr(haveMeetingScheduled(O),Y):-
+		atomic_list_concat(["organizer ",O," wanted to have the meeting that was assigned to them scheduled."],Y),!.
+descr(timetablesCollected(O),Y):- 
+		atomic_list_concat(["organizer ",O," wanted to collect timetables of all potential participants."],Y),!.
+descr(havePPCalled(O,P),Y):- 
+		atomic_list_concat(["organizer ",O," wanted to have ", P,"'s constraints collected by phone."],Y),!.
+descr(meetingAnnounced(O),Y):- 
+		atomic_list_concat(["organizer ",O," wanted to have the meeting announced."],Y),!.
+descr(collectFromCallendar(O,P),Y):- 
+		atomic_list_concat(["organizer ",O," wanted to collect ",P ,"'s constraints by looking at their online callendars."],Y),!.
+descr(announceMeeting(O,P),Y):- 
+		atomic_list_concat(["organizer ",O," wanted to announce the meeting to participant ", P, "."],Y),!.
+
+descr(collectConstraintsByPhone(O,T,P),Y):- 
+		atomic_list_concat(["secretary ",T," collected ",P,"'s constraints by phone on behalf of ",O,"."],Y),!.
+
+descr(participate(P),Y):- 
+		atomic_list_concat(["intitee ",P," wanted to participate to the meeting."],Y),!.
+
 descr(X,X).
-
-
 
 
 
