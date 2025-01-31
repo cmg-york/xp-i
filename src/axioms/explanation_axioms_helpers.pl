@@ -3,7 +3,8 @@
 							is_prefix/3,
 							only_preferred_alt/2,
 							only_feasible_alt/2,
-							write_list/3
+							write_list/3,
+							term_to_string/2
 							]).
 :-dynamic pre_depth/1.
 
@@ -138,8 +139,12 @@ write_list(N,[H1|T1],[H2|T2]):- write(N),write(': '),write(H1), write(' - '), wr
 
 
 
-
-
+/** 
+ * term_to_string(+Input, -Output) is det.
+ * Converts Input to string if it is a term, leaves it as is otherwise.
+ */
+term_to_string(Input, Input) :- string(Input),!.
+term_to_string(Input, Output) :- \+ string(Input), term_string(Input, Output).
 
 
 

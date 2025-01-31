@@ -1,7 +1,8 @@
 :-module(explanation_axioms,[explains_tel/4,
 							explains_can/4,
 							explains_noalt/4,
-							explains_only_preferred/4]).
+							explains_only_preferred/4,
+							explains_template/4]).
 :-use_module('explanation_axioms_helpers.pl').
 :-dynamic pre_depth/1.
 
@@ -135,8 +136,11 @@ explains_only_preferred('...',X,S,'only preferred from feasible (axiom 6)'):-
 						prefixOf_Wrt(S_sel,S,X),
 						onlyPreferredIn(X,S_sel).
 
+%
+% Template-based Explanation
+%
 
-
+explains_template(Y,X,S,"template explanation") :- explains_templ(Y1,X,S,_),string_concat("... - ",Y1,Y).
 
 %
 % T R A N S L A T I O N S 
