@@ -77,7 +77,7 @@ goal(homeProtectedDuringStorm(_)).
 		goal(protecteElectricalSystem(_,_)).
 			goal(powerOffRequested(_,_)).
 		
-goal(homeProtectedforIntruders(_)).
+goal(unexpectedMotionRespondedTo(_)).
 	goal(intruderDeterenceActuated(_,_)).
 		goal(allDoorsAndWindowsClosedAndLocked(_,_)).
 				goal(haveAllDoorsAndWindowsClosedActuated(_,_)).
@@ -87,8 +87,12 @@ goal(homeProtectedforIntruders(_)).
 
 
 or_node(homeProtectedDuringStorm(_)).
-or_node(homeProtectedforIntruders(_)).
+or_node(unexpectedMotionRespondedTo(_)).
 or_node(protectElectricalSystem(_)).
+
+
+feas(intruderDeterenceActuated
+
 
 parent(rootGoal(controlHouse),homeProtectedDuringStorm(_)).
 parent(rootGoal(controlHouse),homeProtectedforIntruders(_)).
@@ -102,10 +106,10 @@ parent(stormProtectionActuated(SSA,J),haveAllDoorsAndWindowsClosed(SSA,J,stormPr
 parent(protecteElectricalSystem(SSA,J),powerOffRequested(SSA,J)).
 parent(protecteElectricalSystem(SSA,J),idle(SSA,J)).
 
-parent(homeProtectedforIntruders(SSA),intruderDeterenceActuated(SSA,J)).
-parent(homeProtectedforIntruders(SSA),idle(SSA)).
+parent(unexpectedMotionRespondedTo(SSA),intruderDeterenceActuated(SSA,J)).
+parent(unexpectedMotionRespondedTo(SSA),idle(SSA,unexpectedMotionRespondedTo)).
 
-parent(intruderDeterenceActuated(SSA,J),allDoorsAndWindowsClosedAndLocked(SSA,J,[intruderDeterenceAcuated])).
+parent(intruderDeterenceActuated(SSA,J),allDoorsAndWindowsClosedAndLocked(SSA,J,[intruderDeterenceActuated])).
 parent(intruderDeterenceActuated(SSA,J),outsideLightsOn(SSA,J,[intruderDeterenceActuated])).
 parent(intruderDeterenceActuated(SSA,J),occupancyLightsOn(SSA,J,[intruderDeterenceActuated])).
 
@@ -168,9 +172,6 @@ parent(haveAllDoorsLocked(DWC,J,G),lockDoor(DWC,J,G,_)).
 parent(haveAllWindowsLocked(DWC,J,G),lockWindow(DWC,J,G,_)).
 
 
-
-
-
 %
 %  Energy Efficiency Agent
 %
@@ -203,10 +204,8 @@ goal(lightIsOff(_,_,_,_)).
 parent(outsideLightsSwitchedOn(LC,J,G),lightIsOn(LC,R,J,[outsideLightsSwitchedOn|G])).
 parent(occupancyLightsSwitchedOn(LC,J,G),lightIsOn(LC,R,J,[occupancyLightsSwitchedOn|G])).
 
-parent(lightIsOn(LC,R,J,G),idle(LC,R,J,lightIsOn)).
 parent(lightIsOn(LC,R,J,G),turnLightOn(LC,R,J,[lightIsOn|G])).
 
-parent(lightIsOff(LC,R,J,G),idle(LC,R,J,lightIsOff)).
 parent(lightIsOff(LC,R,J,G),turnLightOff(LC,R,J,[lightIsOff|G])).
 
 
@@ -215,14 +214,15 @@ parent(lightIsOff(LC,R,J,G),turnLightOff(LC,R,J,[lightIsOff|G])).
 %  Occupant Experience Agent
 %
 
+
+parent(rootGoal(controlHouse),lightSwitchRequestRespondedTo(_,_)).
+parent(rootGoal(controlHouse),lightScheduleActuated(_,_)).
+
+
+goal(lightScheduleActuated(_,_)).
 goal(lightSwitchRequestRespondedTo(_,_)).
 	goal(haveLightOff(_,_,_,_)).
 	goal(haveLightOn(_,_,_,_)).
-
-goal(lightScheduleActuated(_,_)).
-	goal(haveLightOff(_,_,_,_)).
-	goal(haveLightOn(_,_,_,_)).
-
 
 parent(lightSwitchRequestRespondedTo(OEA,R),haveLightOff(OEA,R,_,[lightSwitchRequestRespondedTo])).
 parent(lightSwitchRequestRespondedTo(OEA,R),haveLightOn(OEA,R,_,[lightSwitchRequestRespondedTo])).
@@ -276,7 +276,7 @@ primitive_action(X):-task(X).
 %
 
 proc(main,
-	eeaAct:oeaAct
+	eeaAct:oeaAct:ssaAct
 ).
 
 
@@ -284,6 +284,16 @@ proc(main,
 %
 % Security and Safety Agent
 %
+
+proc(ssaAct,
+	unexpectedMotionRespondedTo(ssa)
+).
+
+
+proc(unexpectedMotionRespondedTo(SSA),
+	intruderDeterenceActuated(SSA,eraseme) # idle(SSA,unexpectedMotionRespondedTo)
+).
+
 
 proc(intruderDeterenceActuated(SSA,J),
 	outsideLightsOn(SSA,J,[intruderDeterenceActuated]) : occupancyLightsOn(SSA,J,[intruderDeterenceActuated])
@@ -309,7 +319,7 @@ proc(eeaAct,
 
 proc(turnUnneededLightsOff(EEA),
 	while( some(r, area(r) & lightOn(r) & -occupied(r)),
-		pi(r, ?(area(r) & lightOn(r) & -occupied(r)) : haveLightTurnedOff(EEA,r,forgetit,[turnUnneededLightsOff(EEA)]))
+		pi(r, ?(area(r) & lightOn(r) & -occupied(r)) : haveLightTurnedOff(EEA,r,forgetit,[turnUnneededLightsOff]))
 	)
 ).
 
@@ -384,6 +394,7 @@ proc(lightIsOff(LC,R,J,G),
 
 poss(foo,S). % RESERVED
 poss(delegate(_,_,_,_),S). % RESERVED
+poss(idle(_,_),S).
 
 poss(turnLightOn(_,R,_,_),S) :- lightOff(R,S).
 poss(turnLightOff(_,R,_,_),S) :- lightOn(R,S).
@@ -400,7 +411,16 @@ sat_haveLightTurnedOff(EEA,R,J,G,S):-sat_lightIsOff(_,R,J,[haveLightTurnedOff|G]
 sat_haveLightOn(OEA,R,J,G,S) :- sat_lightIsOn(_,R,J,[haveLightOn|G],S),occupantExperienceAgent(OEA).
 sat_haveLightOff(OEA,R,J,G,S) :- sat_lightIsOff(_,R,J,[haveLightOff|G],S),occupantExperienceAgent(OEA).
 
+sat_lightSwitchRequestRespondedTo(OEA,R,S):- sat_haveLightOn(OEA,R,_,[lightSwitchRequestRespondedTo|_],S).
+sat_lightSwitchRequestRespondedTo(OEA,R,S):- sat_haveLightOff(OEA,R,_,[lightSwitchRequestRespondedTo|_],S).
+
+sat_lightScheduleActuated(OEA,R,S):- sat_haveLightOn(OEA,R,_,[lightScheduleActuated|_],S).
+sat_lightScheduleActuated(OEA,R,S):- sat_haveLightOff(OEA,R,_,[lightScheduleActuated|_],S).
+
+
 sat_lightIsOn(LC,R,J,G,S) :- perf_turnLightOn(LC,R,J,[lightIsOn|G],S).
+
+
 
 
 
@@ -413,6 +433,10 @@ sat_outsideLightsSwitchedOn(LC,J,G,S):- \+ ((exteriorArea(R),lightOff(R,S))).
 sat_outsideLightsOn(SSA,J,G,S) :- sat_outsideLightsSwitchedOn(LC,J,G,S), lightController(LC), securityAndSafetyAgent(SSA).
 sat_occupancyLightsOn(SSA,J,G,S) :- sat_occupancyLightsSwitchedOn(LC,J,G,S), lightController(LC), securityAndSafetyAgent(SSA).
 
+
+sat_intruderDeterenceActuated(SSA,J,S):- sat_outsideLightsOn(SSA,J,_,S), sat_occupancyLightsOn(SSA,J,_,S).
+
+sat_unexpectedMotionRespondedTo(SSA,S) :- sat_intruderDeterenceActuated(SSA,_,S);perf_idle(SSA,unexpectedMotionRespondedTo,S).
 
 
 %
@@ -435,6 +459,9 @@ perf_turnLightOn(LC,R,J,G,do(A,S)):-perf_turnLightOn(LC,R,J,G,S);
 
 perf_turnLightOff(LC,R,J,G,do(A,S)):-perf_turnLightOff(LC,R,J,G,S);
 									A = turnLightOff(LC,R,J,G).
+
+perf_idle(A,I,do(A,S)):-perf_idle(A,I,S);
+									A = idle(A,I).
 
 lightOn(R,do(A,S)):- (lightOn(R,S), A \= turnLightOff(_,R,_,_));
 						(lightOff(R,S), A = turnLightOn(_,R,_,_)).
@@ -462,6 +489,7 @@ restoreSitArg(hasDelegated(Delegator,Delegatee,DelegatorGoal,DelegateeGoal),S,ha
 
 restoreSitArg(perf_turnLightOn(LC,R,J,G),S,perf_turnLightOn(LC,R,J,G,S)).
 restoreSitArg(perf_turnLightOff(LC,R,J,G),S,perf_turnLightOff(LC,R,J,G,S)).
+restoreSitArg(perf_idle(A,I),S,perf_idle(A,I,S)).
 
 
 restoreSitArg(sat_turnUnneededLightsOff(EEA),S,sat_turnUnneededLightsOff(EEA,S)).
@@ -483,8 +511,13 @@ restoreSitArg(sat_outsideLightsSwitchedOn(LC,J,G),S,sat_outsideLightsSwitchedOn(
 
 restoreSitArg(sat_occupancyLightsOn(SSA,J,G),S,sat_occupancyLightsOn(SSA,J,G,S)).
 restoreSitArg(sat_outsideLightsOn(SSA,J,G),S,sat_outsideLightsOn(SSA,J,G,S)).
-
 restoreSitArg(sat_intruderDeterenceActuated(SSA,J),S,sat_intruderDeterenceActuated(SSA,J,S)).
+restoreSitArg(unexpectedMotionRespondedTo(SSA),S,unexpectedMotionRespondedTo(SSA,S)).
+
+restoreSitArg(sat_lightSwitchRequestRespondedTo(OEA,R),S,sat_lightSwitchRequestRespondedTo(OEA,R,S)).
+restoreSitArg(sat_lightScheduleActuated(OEA,R),S,sat_lightScheduleActuated(OEA,R,S)).
+
+
 
 
 %
@@ -513,13 +546,22 @@ descr(lightSwitchRequestRespondedTo(OEA,R),Y):-
 descr(lightScheduleActuated(OEA,R),Y):-
 		atomic_list_concat(["occupant experience agent ",OEA," wanted to actuate a scheduled event"],Y),!.
 
-
 descr(outsideLightsOn(SSA,_,_),Y):- 
 		atomic_list_concat(["security and safety agent ",SSA," wanted to have all outside lights turn on"],Y),!.
 descr(occupancyLightsOn(SSA,_,_),Y):- 
 		atomic_list_concat(["security and safety agent ",SSA," wanted to have all interior occupancy outside lights turn on"],Y),!.
 descr(intruderDeterenceActuated(SSA,_),Y):- 
 		atomic_list_concat(["security and safety agent ",SSA," had intruder deterence measures actuated"],Y),!.
+descr(unexpectedMotionRespondedTo(SSA),Y):- 
+		atomic_list_concat(["security and safety agent ",SSA," wanted to respond to an unexpected motion that was detected"],Y),!.
+
+
+
+descr(turnUnneededLightsOff(EEA),Y):- 
+		atomic_list_concat(["energy efficiency agent ",EEA," wanted to turn lights off in areas of no occupancy."],Y),!.
+descr(haveLightTurnedOff(EEA,R,_,_),Y):- 
+		atomic_list_concat(["energy efficiency agent ",EEA," wanted to turn light off in ", R, " on account of it not being occupied."],Y),!.
+
 
 
 

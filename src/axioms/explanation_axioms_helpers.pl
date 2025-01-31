@@ -134,7 +134,7 @@ none_feasible([H|T],S):- \+ feas(H,S),none_feasible(T,S).
  * Assumes the lenghts of the list are equal.
  */
 write_list(_,[],[]).
-write_list(N,[H1|T1],[H2|T2]):- write(N),write(': '),write(H1), write(' - '), write(H2),
+write_list(N,[H1|T1],[H2|T2]):- write(N),write(': '),descr(H1,H1_descr),write(H1_descr), write(' - '), write(H2),
 								nl,M is N+1, write_list(M,T1,T2).
 
 
