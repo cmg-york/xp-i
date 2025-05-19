@@ -39,6 +39,12 @@ requestWithin30days(foo).
 requestsCPS(student).
 physicianStatement(foo).
 
+%appealIncomplete(student).
+appealIncomplete(foo).
+appealDeadlinePassed(foo).
+requestsPresenceInHearing(foo).
+
+
 attendingUniversityForFirstTime(student).
 coursesCompletedWithinFisrtYear(foo).
 
@@ -404,6 +410,7 @@ proc(lateWithdrawalDecisionAppealed(T),
 
 proc(handleCPSRequest(I,T), 
 	writeAndSubmitCPS(I,T) # delegateCPSRequest(I,T)
+	%delegateCPSRequest(I,T)
 ).
 
 % Instructor dependencies
@@ -434,6 +441,7 @@ proc(decideUponWithdrawalRequest(C,E,T),
 
 proc(lateWithdrawalRequestHandled(E,T),
 	haveChairAdjudicate(E,T) # deskRejectCourseWithdrawalRequest(E,T) # grantCourseWithdrawalRequest(E,T)
+	%grantCourseWithdrawalRequest(E,T)
 ).
 
 
@@ -483,7 +491,11 @@ proc(appealDocumentationReceived(ACC,T),
 
 proc(completeLateWithdrawalAppealHandled(ACC,T),
 	doNotAdvanceProceeding(ACC,T) #
-	haveProceedingAdvanced(ACC,T)
+	(?(-appealIncomplete(T) & -appealDeadlinePassed(T) & 
+	   -(facultyCommittee(FC) & perf_grantPetition(FC,T)) & 
+	   -(departmentalSecretary(E) & perf_grantCourseWithdrawalRequest(E,T)) & 
+	   -(departmentalSecretary(E) & departmentalChair(C) & perf_grantCourseWithdrawalRequest(E,T)) 
+	   ): haveProceedingAdvanced(ACC,T))
 ).
 
 
@@ -544,7 +556,7 @@ poss(noPetitionNeeded(T),S):- departmentalRequestGranted(T,S).
 poss(noAppealNeeded(T),S) :- departmentalRequestGranted(T,S); facultyPetitionGranted(T,S).
 
 poss(meetWithAcademicAdvisor(_),S).
-poss(writeAndSubmitCPS(I,T),S):- requestsCPS(T),instructor(I),instructorAvailable(I).
+poss(writeAndSubmitCPS(I,T),S):- requestsCPS(T),instructor(I),instructorAvailable(I),fail.
 poss(writeAndSubmitCPS(_,_,T),S):- requestsCPS(T).
 
 %Secretary
@@ -555,13 +567,13 @@ poss(grantCourseWithdrawalRequest(_,T),S):- requestWithin30days(T),(cpsAttached(
 
 %Chair
 poss(rejectCourseWithdrawalRequest(_,_,_),S).
-poss(grantCourseWithdrawalRequest(_,_,_),S):-(cpsAttached(T,S);cpsWaived(T)).
+poss(grantCourseWithdrawalRequest(_,_,_),S):-(cpsAttached(T,S);cpsWaived(T)),fail.
 
 
 % Petition stage
 poss(grantPetition(_,T),S) :- departmentalRequestRejected(T,S).
-poss(rejectPetition(_,T),S) :- departmentalRequestRejected(T,S).
-poss(deskRejectPetition(_,_),S).
+poss(rejectPetition(_,T),S) :- departmentalRequestRejected(T,S),fail.
+poss(deskRejectPetition(_,_),S):-fail.
 
 poss(doNotAdvanceProceeding(ACC,T),S). % :- sat_appealDocumentationReceived(ACC,T,S).
 poss(submitAppealDocumentation(_,_),S).
@@ -794,13 +806,6 @@ perf_grantCourseWithdrawalRequest(Agent,E,T,do(A,S)) :-
 									A = grantCourseWithdrawalRequest(Agent,E,T).
 
 
-perf_grantCourseWithdrawalRequest(Agent,E,T,do(A,S)) :- 
-									perf_grantCourseWithdrawalRequest(Agent,E,T,S);
-									A = grantCourseWithdrawalRequest(Agent,E,T).
-
-
-
-
 perf_deskRejectCourseWithdrawalRequest(Agent,T,do(A,S)) :- 
 									perf_deskRejectCourseWithdrawalRequest(Agent,T,S);
 									A = deskRejectCourseWithdrawalRequest(Agent,T).
@@ -809,9 +814,9 @@ perf_grantCourseWithdrawalRequest(Agent,T,do(A,S)) :-
 									perf_grantCourseWithdrawalRequest(Agent,T,S);
 									A = grantCourseWithdrawalRequest(Agent,T).
 
-perf_deskRejectCourseWithdrawalRequest(Agent,T,do(A,S)) :- 
-									perf_deskRejectCourseWithdrawalRequest(Agent,T,S);
-									A = deskRejectCourseWithdrawalRequest(Agent,T).
+%perf_deskRejectCourseWithdrawalRequest(Agent,T,do(A,S)) :- 
+%									perf_deskRejectCourseWithdrawalRequest(Agent,T,S);
+%									A = deskRejectCourseWithdrawalRequest(Agent,T).
 
 
 perf_grantPetition(Agent,T,do(A,S)) :- 
@@ -1086,13 +1091,15 @@ explains_templ(Y,writeAndSubmitCPS(C,I,T),_,J):- chairCPSRationalle(C,I,T,J),ato
 % Departmental Secretary
 %
 secreatryDecisionRationalle(E,T,"request within 1 year of course ending but beyond 30 days - chair to adjudicate"):- requestWithinYear(T),\+ requestWithin30days(T).
+secreatryDecisionRationalle(E,T,"requests made within 30 days automatically granted."):- requestWithinYear(T),requestWithin30days(T).
 secreatryDecisionRationalle(E,T,"request after 1 year threshold from the time course ended - department cannot adjudicate") :- \+ requestWithinYear(T).
 secreatryDecisionRationalle(_,T,S,"CPS not attached but required."):- \+(cpsAttached(T,S);cpsWaived(T)).
 explains_templ(Y,deskRejectCourseWithdrawalRequest(E,T),_,J):- secreatryDecisionRationalle(E,T,J),atomic_list_concat(["departmental secretary [",E,"] made the decision to desk rejecte late withdrawal request by student [",T,"]. Desk rejection was justifed as: ", J],Y).
+
 explains_templ(Y,haveChairAdjudicate(E,T),_,J):- secreatryDecisionRationalle(E,T,J),atomic_list_concat(["departmental secretary [",E,"] made the decision to delegate to chair the late withdrawal request by student [",T,"]. Delegation was justifed as: ", J],Y).
+explains_templ(Y,grantCourseWithdrawalRequest(E,T),_,J):- secreatryDecisionRationalle(E,T,J),atomic_list_concat(["departmental secretary [",E,"] made the decision to grant late withdrawal request by student [",T,"], without further deliberation with justification: ", J],Y).
 
-
-
+explains_templ(Y,delegate(E,C,haveChairAdjudicate(E,T),decideUponWithdrawalRequest(C,E,T)),_,J):-departmentalChair(C),explains_templ(Y,haveChairAdjudicate(E,T),_,J).
 
 
 %
@@ -1105,7 +1112,14 @@ explains_templ(Y,rejectPetition(FC,T),_,J):- petitionOutcomeExplanation(J),atomi
 deskRejectPetitionRationalle(_,T,S,"paperwork incomplete: Course Performance Summary (CPS) missing when required"):- \+ cpsAttached(T,S),\+ cpsWaived(T).
 deskRejectPetitionRationalle(_,T,S,"departmental request already granted"):- departmentalRequestGranted(T,S).
 deskRejectPetitionRationalle(_,T,S,"forms incomplete or information correctness issue"):- departmentalRequestRejected(T,S),(cpsAttached(T,S);cpsWaived(T)).
+grantPetitionRationalle(FC,T,S," student conditions compeling despite lack of apporpriate physician documentation"):-
+\+ physicianStatement(T).
+grantPetitionRationalle(FC,T,S," student conditions compeling despite lack of accompanying CPS document"):-
+\+ cpsAttached(T,S),\+ cpsWaived(T).
+
 explains_templ(Y,deskRejectPetition(FO,T),S,J):- deskRejectPetitionRationalle(FO,T,S,J),atomic_list_concat(["faculty committee officer [",FO,"] made the decision to desk reject petition by student [",T,"]. Desk rejection was justifed as: ", J],Y).
+
+explains_templ(Y,grantPetition(FC,T),S,J):- grantPetitionRationalle(FC,T,S,J),atomic_list_concat(["faculty committee [",FC,"] granted petition by student [",T,"], with comment: ", J],Y).
 
 
 
@@ -1114,17 +1128,27 @@ explains_templ(Y,deskRejectPetition(FO,T),S,J):- deskRejectPetitionRationalle(FO
 %
 
 appealOutcomeExplanation("committee judged that the appellant's circumstances do not justify course performance").
-omitInvitationRationale(T,"presence not requested by appealant and not deemed necessary by committee"):-requestsPresenceInHearing(T).
+omitInvitationRationale(T,"presence not requested by appealant and not deemed necessary by committee"):- \+ requestsPresenceInHearing(T).
 oralResponseRationale("writen response avoided to protect case confidentiality").
 
 explains_templ(Y,denyAppeal(SAC,T),_,J):- appealOutcomeExplanation(J),atomic_list_concat(["Senate appeals committee rejected appeal of student [",T, "] with justification: [", J, "]"],Y).
 explains_templ(Y,omitStudentInvitationToMeeting(SAC,T),_,J):- omitInvitationRationale(T,J),atomic_list_concat(["Senate appeals committee did not invite student [",T, "] in hearing with justification: [", J, "]"],Y).
-explains_templ(Y,issueOralResponse(SAC,T),_,J):- oralResponseRationale(J),atomic_list_concat(["Senate appeals committee did not invite student [",T, "] in hearing with justification: [", J, "]"],Y).
+explains_templ(Y,issueOralResponse(SAC,T),_,J):- oralResponseRationale(J),atomic_list_concat(["Senate appeals committee issued an oral response to student's [",T, "] appeal with justification: [", J, "]"],Y).
 
 
-doNotAdvanceRationalle(ACC,T,S,J) XXX complete
-dismissWithoutHearingRationalle(SAC,T,S,J) XXX complete
 
+% dismissWithoutHearingRationalle(SAC,T,S,J) XXX complete
+
+doNotAdvanceRationalle(_,T,S," faculty petition already granted ."):- facultyCommittee(FC),
+	perf_grantPetition(FC,T,S),!.
+doNotAdvanceRationalle(_,T,S," course withdrwal already granted by department."):- 
+	departmentalChair(C),
+	departmentalSecretary(E), (perf_grantCourseWithdrawalRequest(E,T,S);
+	                           perf_grantCourseWithdrawalRequest(C,E,T,S)),!.
+doNotAdvanceRationalle(_,T,_," appeal deadline passed."):- appealDeadlinePassed(T),!.
+doNotAdvanceRationalle(_,T,_," appeal incomplete."):- appealIncomplete(T),!.
+
+dismissWithoutHearingRationalle(_,_,_," circumstances offered by student outside the scope and powers of the committee.").
 
 explains_templ(Y,dismissAppealWithoutHearing(SAC,T),S,J):- dismissWithoutHearingRationalle(SAC,T,S,J),atomic_list_concat(["Senate appeals committee dismissed appeal by student [",T,"] without hearing on the following grounds: ", J],Y).
 explains_templ(Y,doNotAdvanceProceeding(ACC,T),S,J):- doNotAdvanceRationalle(ACC,T,S,J),atomic_list_concat(["Senate appeals committee chair did not advance appeal by student [",T,"] with justification: ", J],Y).
