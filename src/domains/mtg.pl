@@ -124,6 +124,8 @@ secretary(alex).
 promote(quickScheduling).
 
 ppJustification(amr,"needs to report on agenda items 3 and 4.").
+ppJustification(xing,"is the recording secretary.").
+ppJustification(naya,"is the chair of the meeting.").
 
 
 
@@ -443,4 +445,6 @@ descr(X,X).
 
 explain(whyisPP(X)) :- potential_participant(X), ppJustification(X,U), atomic_list_concat(["Because ",X," ",U],Y),write(Y),!.
 
+% TODO: Custom templates need to be provided in the following format:
+explains_templ(Y,added_for_compatibility,_,J).
 

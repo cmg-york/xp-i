@@ -350,7 +350,7 @@ primitive_action(X):-task(X).
 %
 
 proc(main,
-	eeaAct:oeaAct:ssaAct
+	ssaAct:oeaAct:eeaAct
 ).
 
 bulb(off).

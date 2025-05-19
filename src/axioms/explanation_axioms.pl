@@ -142,6 +142,7 @@ explains_only_preferred('...',X,S,'only preferred from feasible (axiom 6)'):-
 
 explains_template(Y,X,S,"template explanation") :- explains_templ(Y1,X,S,_),string_concat("... - ",Y1,Y).
 
+
 %
 % T R A N S L A T I O N S 
 %
